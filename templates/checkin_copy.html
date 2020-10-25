@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Đề tài nghiên cứu khoa học THCS Quang Trung</title>
+</head>
+<body>
+    <h1>
+        Điểm danh
+    </h1>
+    <img id='frame' src="{{ url_for('video_feed') }}" width="50%"/>
+    <div id="guide">
+        <h2>Hướng dẫn:</h2>
+        <h3>- Nhìn thẳng vào camera để ảnh rõ nét<br>
+        - Xác nhận kết quả điểm danh</h3>
+    </div>
+    <h2>Kết quả điểm danh: <b id="name"></b></h2>
+</body>
+<script src="{{ url_for('static', filename='js/jquery-3.5.1.min.js') }}"></script>
+<script>
+    var predict_name = document.getElementById("name");  // Cache that (faster)
+    var frame = document.getElementById("frame");  // Cache that (faster)
+
+    var canvas = document.createElement("canvas");
+    canvas.width = frame.width;
+    canvas.height = frame.height;
+
+    // Copy the image contents to the canvas
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(frame, 0, 0);
+
+    // Get the data-URL formatted image
+    // Firefox supports PNG and JPEG. You could check img.src to
+    // guess the original format, but be aware the using "image/jpg"
+    // will re-encode the image.
+    var dataURL = canvas.toDataURL("image/png");
+
+    function updateP(){
+        //... Do whatever
+        console.log(dataURL)
+        $.ajax({
+            url: "/recognize",
+            type: "get",
+            data: {'data': dataURL},
+            success: function(response) {
+                predict_name.innerHTML = response;
+            },
+            error: function(xhr) {
+                //Do Something to handle error
+            }
+        });
+    }
+
+  updateP(); // Update once immediately...
+  setInterval(updateP, 1000) // ...and then again every 3000ms
+</script>
+<style type="text/css">
+    h1 {
+        text-align: center;
+        color: green;
+    }
+    div#guide {
+        float: right;
+    }
+
+    div#guide h2 {
+        color: green
+    }
+
+    div#guide h3 {
+        color: green
+    }
+</style>
+</html>

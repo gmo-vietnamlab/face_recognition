@@ -1,0 +1,5 @@
+face_rec_venv/
+.DS_Store
+__pycache__/
+video_data/
+train_images/

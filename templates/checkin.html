@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Đề tài nghiên cứu khoa học THCS Quang Trung</title>
+</head>
+<body>
+    <h1>
+        Điểm danh
+    </h1>
+    <img id='frame' src="{{ url_for('static', filename='resource/face_rec_example.jpg') }}" width="50%"/>
+    <div id="guide">
+        <h2>Hướng dẫn:</h2>
+        <h3>- Nhìn thẳng vào camera để ảnh rõ nét<br>
+        - Xác nhận kết quả điểm danh</h3>
+        <button id="enable_button" onclick="enableCheckIn()">
+        Thực hiện điểm danh
+        </button>
+        <button id="disable_button" onclick="disableCheckIn()">
+            Kết thúc điểm danh
+        </button>
+    </div>
+
+</body>
+<script src="{{ url_for('static', filename='js/jquery-3.5.1.min.js') }}"></script>
+<script>
+    function enableCheckIn(){
+        // call api
+        $.ajax({
+            url: "/enable_check_in",
+            type: "post",
+            data: {},
+            success: function(response) {
+            },
+            error: function(xhr) {
+                //Do Something to handle error
+            }
+        });
+    }
+
+    function disableCheckIn(){
+        // call api
+        $.ajax({
+            url: "/disable_check_in",
+            type: "post",
+            data: {},
+            success: function(response) {
+            },
+            error: function(xhr) {
+                //Do Something to handle error
+            }
+        });
+    }
+</script>
+<style type="text/css">
+    h1 {
+        text-align: center;
+        color: green;
+    }
+    div#guide {
+        float: right;
+        margin-right: 200px;
+    }
+
+    div#guide h2 {
+        color: green
+    }
+
+    div#guide h3 {
+        color: green
+    }
+</style>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+</head>
+
+<body>
+    <div id="screenshot">
+        <video class="videostream" autoplay></video>
+        <img id="screenshot-img" src="">
+        <p>
+            <button class="capture-button">Quay Video</button>
+        </p>
+        <p>
+            <!-- <button id="screenshot-button">Take screenshot</button> -->
+            <a id="screenshot-button" download="image.png"><button type="button">Tải ảnh xuống</button></a>
+
+        </p>
+        <p>
+            <button id="add-new-data" onclick="addNewData()">Thêm dữ liệu học sinh</button>
+        </p>
+
+        <canvas style="display:none;"></canvas>
+    </div>
+    <script src="{{ url_for('static', filename='js/jquery-3.5.1.min.js') }}"></script>
+    <script>
+        const constraints = {
+            video: true
+        };
+
+        const captureVideoButton = document.querySelector('#screenshot .capture-button');
+        const screenshotButton = document.querySelector('#screenshot-button');
+        const addNewDataButton = document.querySelector('#add-new-data');
+        const img = document.querySelector('#screenshot img')
+        const video = document.querySelector('#screenshot video');
+
+        const canvas = document.createElement('canvas')
+
+        captureVideoButton.onclick = function () {
+            navigator.mediaDevices.getUserMedia(constraints).
+                then(handleSuccess).catch(handleError);
+        }
+
+        screenshotButton.onclick = video.onclick = function () {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+
+            // save to png
+            var image = canvas.toDataURL("image/png")
+                        .replace("image/png", "image/octet-stream");
+            screenshotButton.setAttribute("href", image);
+
+            // show img
+            img.src = canvas.toDataURL('image/webp');
+        };
+
+        const handleSuccess = function (stream) {
+            screenshotButton.disabled = false;
+            video.srcObject = stream;
+
+        }
+
+        const handleError = function (error) {
+            console.log('Error: ', error)
+        }
+
+        function addNewData() {
+            // call api
+            $.ajax({
+                url: "/add_new_person_encodings",
+                type: "post",
+                data: {},
+                success: function(response) {
+                },
+                error: function(xhr) {
+                    //Do Something to handle error
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
