@@ -1,4 +1,4 @@
-from face_rec_arcface import Recognize, FaceRecognizeDemo
+from model.face_rec_arcface import FaceRecognizer, FaceRecognizeDemo
 from save_face_encoding import save_encoding_main
 from flask import Flask, render_template, Response, jsonify, request
 import time
@@ -6,7 +6,6 @@ import datetime
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import json
 import cv2
 
 app = Flask(__name__)
@@ -15,7 +14,7 @@ ENABLE_CHECK_IN = False
 CHECK_IN_FILE = ''
 CHECK_IN_DATA = None
 
-recognizer = Recognize()
+recognizer = FaceRecognizer()
 
 
 @app.route('/')
@@ -32,7 +31,7 @@ def ENABLE_CHECK_IN():
         ENABLE_CHECK_IN = True
 
         # create empty file
-        CHECK_IN_FILE = 'ket_qua_diem_danh/file_diem_danh_{}.csv'.format(
+        CHECK_IN_FILE = 'checkin_result/file_diem_danh_{}.csv'.format(
             datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))
         Path(CHECK_IN_FILE).touch()
 

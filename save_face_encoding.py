@@ -7,6 +7,7 @@ import cv2
 import insightface
 from face_save import FaceSave
 import shutil
+import argparse
 
 
 def crop_face(image, crop_locations):
@@ -81,9 +82,9 @@ def arcface_save_encodings(image_dir):
 
 
 def save_encoding_main(overwrite=False):
-    directory = 'du_lieu_hoc_sinh'
-    train_directory = 'train_images'
-    encoding_file_name = 'encodings/thcs_quangtrung_encodings.dat'
+    directory = 'data/employee_data'
+    train_directory = 'data/train_images'
+    encoding_file_name = 'data/encodings/vnlab_HN_encodings.dat'
 
     # remove data in train directory
     if os.path.isdir(train_directory):
@@ -104,11 +105,11 @@ def save_encoding_main(overwrite=False):
     with open(encoding_file_name, 'wb') as f:
         pickle.dump(encodings, f)
 
-    # remove data in du_lieu_hoc_sinh
+    # remove data in employee_data
     if os.path.isdir(directory):
         shutil.rmtree(directory)
     os.mkdir(directory)
 
 
 if __name__ == "__main__":
-    save_encoding_main(overwrite=False)
+    save_encoding_main(overwrite=True)

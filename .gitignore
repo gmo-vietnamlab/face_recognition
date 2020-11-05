@@ -2,4 +2,5 @@ face_rec_venv/
 .DS_Store
 __pycache__/
 video_data/
-train_images/
+data/*
+checkin_api/Time-attendance-backend.postman_collection.json

@@ -9,8 +9,8 @@ import faiss
 import pickle
 
 
-def init_faiss_index(model='face_recognition', dim=128):
-    with open('encodings/thcs_quangtrung_encodings.dat', 'rb') as f:
+def init_faiss_index(model='arcface', dim=512):
+    with open('data/encodings/vnlab_HN_encodings.dat', 'rb') as f:
         all_face_encodings = pickle.load(f)
 
     pandas_dict = {}
@@ -36,7 +36,7 @@ def init_faiss_index(model='face_recognition', dim=128):
 
     if model == 'arcface':
         quantizer = faiss.IndexFlatIP(dim)
-        index = faiss.IndexIVFFlat(quantizer, dim, 100, faiss.METRIC_INNER_PRODUCT)
+        index = faiss.IndexIVFFlat(quantizer, dim, 9, faiss.METRIC_INNER_PRODUCT)
 
         train_vectors = np.ascontiguousarray(df_all[list_vector].astype('float32'))
         faiss.normalize_L2(train_vectors)
@@ -65,23 +65,27 @@ class FaceRecognizeDemo(object):
             return
 
 
-class Recognize(object):
+class FaceRecognizer(object):
     def __init__(self):
         self.image = None
         self.fa = insightface.app.FaceAnalysis()
         self.fa.prepare(ctx_id=-1)
-        self.set_faiss_index()
+        self._set_faiss_index()
 
-    def set_faiss_index(self):
+    def _set_faiss_index(self):
         self.name_list, self.faiss_index = init_faiss_index('arcface', 512)
 
     def recognize_image(self, image):
         rgb_frame = image[:, :, ::-1]
         f_locations = face_recognition.face_locations(rgb_frame, model="hog")
+        if len(f_locations) > 0:
+            found_front_face = True
+        else:
+            found_front_face = False
         name = 'Unknown'
         print('in predict')
 
-        if len(f_locations) > 0:
+        if found_front_face:
             print('found face')
             face = self.fa.get(image)
             face_encoding = face[0].normed_embedding
@@ -91,4 +95,4 @@ class Recognize(object):
                 # only accept distance < 0.6
                 name = self.name_list[id[0][0]]
 
-        return name
+        return found_front_face, name

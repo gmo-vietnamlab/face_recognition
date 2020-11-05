@@ -1,27 +1,26 @@
 from __future__ import division
+from checkin_api.checkin_api import CheckinAPI
+from model.face_rec_arcface import FaceRecognizer, FaceRecognizeDemo
 from datetime import datetime
+from dateutil import tz
 import cv2
-import numpy as np
-import pandas as pd
-import pickle
 import threading
 import time
-import json
-import requests
-import datetime
 
 
 class CheckIn(object):
-    def __init__(self, source):
+    def __init__(self, input_source, face_recognizer):
+        self.checkin_api = CheckinAPI()
+        self.face_recognizer = face_recognizer
         self.image = None
         self.p_name = ['Unknown']
-        self.cap = cv2.VideoCapture(source)
+        self.cap = cv2.VideoCapture(input_source)
         self.cap.set(cv2.CAP_PROP_FPS, 10)
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
         self.in_predict = True
 
-    def run_check_in(self):
+    def run_camera(self):
         try:
             ret, self.image = self.cap.read()
 
@@ -34,7 +33,8 @@ class CheckIn(object):
             # Display the resulting image
             cv2.imshow('Video', image)
 
-        except Exception:
+        except Exception as e:
+            print('Got exception when capture video!¥n', e)
             pass
 
     def predict_name(self):
@@ -43,32 +43,32 @@ class CheckIn(object):
             time.sleep(1)
             if self.image is None:
                 continue
-            print('send request: ', self.image.shape)
-            _, img_encoded = cv2.imencode('.jpg', self.image)
+            found_front_face, self.p_name[0] = self.face_recognizer.recognize_image(self.image)
+            if found_front_face:
+                self.do_check_in(self.p_name[0])
 
-            rp = requests.get(url='http://localhost:5000/predict_frame',
-                              headers={
-                                  'Content-Type': 'image/jpeg',
-                                  'User-Agent': 'test'
-                              },
-                              data=img_encoded.tostring())
-
-            self.p_name[0] = rp.json()['name']
+    def do_check_in(self, name):
+        if name != 'Unknown':
+            now = datetime.now(tz.tzlocal())
+            checkin_time = now.isoformat(timespec='seconds')
+            self.checkin_api.call_api(name, checkin_time)
+        else:
+            # save unknown person image for analysis
+            pass
 
 
 if __name__ == "__main__":
-    checkIn = CheckIn(source=0)
+    checkIn = CheckIn(input_source='data/checkin_videos/NguyenBaDuy.MOV', face_recognizer=FaceRecognizer())
 
     predict_thread = threading.Thread(target=checkIn.predict_name)
     predict_thread.start()
 
     while checkIn.cap.isOpened():
-        checkIn.run_check_in()
+        checkIn.run_camera()
         if cv2.waitKey(30) & 0xFF == ord('q'):
             break
 
     checkIn.cap.release()
-    # rec.writer.release()
     cv2.destroyAllWindows()
     predict_thread.join()
     del predict_thread

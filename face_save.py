@@ -5,6 +5,7 @@ import face_recognition
 import pickle
 import numpy as np
 
+
 class FaceSave(object):
     def __init__(self, save_image_dir):
         self.save_image_dir = save_image_dir
