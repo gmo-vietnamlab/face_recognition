@@ -76,10 +76,11 @@ class FaceRecognizer(object):
         self.name_list, self.faiss_index = init_faiss_index('arcface', 512)
 
     def recognize_image(self, image):
-        rgb_frame = image[:, :, ::-1]
-        f_locations = face_recognition.face_locations(rgb_frame, model="hog")
+        f_locations = face_recognition.face_locations(image, model="hog")
         if len(f_locations) > 0:
             found_front_face = True
+            fl = f_locations[0]
+            image = image[fl[0]:fl[2], fl[3]:fl[1], :]
         else:
             found_front_face = False
         name = 'Unknown'
