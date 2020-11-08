@@ -7,7 +7,6 @@ import insightface
 import face_recognition
 import faiss
 import pickle
-import time
 
 
 def init_faiss_index(model='arcface', dim=512):
@@ -78,7 +77,6 @@ class FaceRecognizer(object):
 
     def recognize_image(self, image):
         f_locations = face_recognition.face_locations(image, model="hog")
-        start = time.time()
         if len(f_locations) > 0:
             found_front_face = True
             fl = f_locations[0]
@@ -86,8 +84,6 @@ class FaceRecognizer(object):
         else:
             found_front_face = False
         name = 'Unknown'
-        print('in predict')
-
         if found_front_face:
             print('found face')
             face = self.fa.get(image)
@@ -97,5 +93,4 @@ class FaceRecognizer(object):
             if 1 - similarity < 0.6:
                 # only accept distance < 0.6
                 name = self.name_list[id[0][0]]
-        print('end in: ', time.time() - start)
         return found_front_face, name

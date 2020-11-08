@@ -15,14 +15,14 @@ class CheckIn(object):
         self.checkin_api = CheckinAPI()
         self.face_recognizer = face_recognizer
         self.image = None
-        self.predict_name = ['Unknown']
+        self.predicted_name = ['Unknown']
         self.cap = cv2.VideoCapture(input_source)
         self.cap.set(cv2.CAP_PROP_FPS, 10)
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
         self.in_predict = True
         self.time_zone = tz.tzlocal()
-        self.checked = []
+        self.checked_name = []
         self.today_dir = 'checkin_result/{}'.format(datetime.now().strftime('%Y%m%d'))
 
     def run_camera(self):
@@ -30,10 +30,10 @@ class CheckIn(object):
             ret, self.image = self.cap.read()
             self.predict_name()
             # copy image then add text to that copy
-            image = self.image.copy()
-            cv2.rectangle(image, (0, 0), (260, 50), (255, 255, 255), cv2.FILLED)
-            font = cv2.FONT_HERSHEY_TRIPLEX
-            cv2.putText(image, self.predict_name[0], (10, 30), font, 1.3, (0, 128, 0), 1)
+            # image = self.image.copy()
+            # cv2.rectangle(image, (0, 0), (260, 50), (255, 255, 255), cv2.FILLED)
+            # font = cv2.FONT_HERSHEY_TRIPLEX
+            # cv2.putText(image, self.predicted_name[0], (10, 30), font, 1.3, (0, 128, 0), 1)
 
             # Display the resulting image
             # cv2.imshow('Video', image)
@@ -43,25 +43,22 @@ class CheckIn(object):
             pass
 
     def predict_name(self):
-        print('run predict')
-        # continue
-        # time.sleep(1)
         if self.image is None:
             return
-        found_front_face, self.predict_name[0] = self.face_recognizer.recognize_image(self.image)
+        found_front_face, self.predicted_name[0] = self.face_recognizer.recognize_image(self.image)
         if found_front_face:
-            self.do_check_in(self.predict_name[0])
+            self.do_check_in(self.predicted_name[0])
 
     def do_check_in(self, name):
-        if name != 'Unknown' and name not in self.checked:
-            self.checked.append(name)
-            cv2.imwrite('{}/known/{}.jpg'.format(self.today_dir, uuid.uuid4()))
+        if name != 'Unknown' and name not in self.checked_name:
+            self.checked_name.append(name)
+            cv2.imwrite('{}/known/{}_{}.jpg'.format(self.today_dir, name, uuid.uuid4()), self.image)
             now = datetime.now(self.time_zone)
             checkin_time = now.isoformat(timespec='seconds')
             self.checkin_api.call_api(name, checkin_time)
         else:
             # save unknown person image for analysis
-            cv2.imwrite('{}/unknown/{}.jpg'.format(self.today_dir, uuid.uuid4()))
+            cv2.imwrite('{}/unknown/{}.jpg'.format(self.today_dir, uuid.uuid4()), self.image)
 
 
 if __name__ == "__main__":
