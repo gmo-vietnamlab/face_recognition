@@ -25,13 +25,13 @@ class CheckIn(object):
             ret, self.image = self.cap.read()
 
             # copy image then add text to that copy
-            image = self.image.copy()
-            cv2.rectangle(image, (0, 0), (260, 50), (255, 255, 255), cv2.FILLED)
-            font = cv2.FONT_HERSHEY_TRIPLEX
-            cv2.putText(image, self.p_name[0], (10, 30), font, 1.3, (0, 128, 0), 1)
+            # image = self.image.copy()
+            # cv2.rectangle(image, (0, 0), (260, 50), (255, 255, 255), cv2.FILLED)
+            # font = cv2.FONT_HERSHEY_TRIPLEX
+            # cv2.putText(image, self.p_name[0], (10, 30), font, 1.3, (0, 128, 0), 1)
 
             # Display the resulting image
-            cv2.imshow('Video', image)
+            # cv2.imshow('Video', image)
 
         except Exception as e:
             print('Got exception when capture video!¥n', e)
