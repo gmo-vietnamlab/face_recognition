@@ -51,9 +51,10 @@ class CheckIn(object):
             self.do_check_in(self.predicted_name[0])
 
     def do_check_in(self, name):
-        if name != 'Unknown' and name not in self.checked_name:
-            self.checked_name.append(name)
-            cv2.imwrite('{}/known/{}_{}.jpg'.format(self.today_dir, name, uuid.uuid4()), self.image)
+        if name != 'Unknown':
+            if name not in self.checked_name:
+                self.checked_name.append(name)
+                cv2.imwrite('{}/known/{}_{}.jpg'.format(self.today_dir, name, uuid.uuid4()), self.image)
             now = datetime.now(self.time_zone)
             checkin_time = now.isoformat(timespec='seconds')
             self.checkin_api.call_api(name, checkin_time)
