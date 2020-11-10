@@ -57,7 +57,7 @@ class CheckIn(object):
             now = datetime.now(self.time_zone)
             checkin_time = now.isoformat(timespec='seconds')
             self.checkin_api.call_api(name, checkin_time)
-            post_message_to_channel('{}: {}', name, checkin_time)
+            post_message_to_channel('{}: {}'.format(name, checkin_time))
         else:
             # save unknown person image for analysis
             cv2.imwrite('{}/unknown/{}.jpg'.format(self.today_dir, uuid.uuid4()), self.image)
