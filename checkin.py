@@ -1,5 +1,6 @@
 from __future__ import division
 from checkin_api.checkin_api import CheckinAPI
+from checkin_api.mattermost.post import post_message_to_channel
 from model.face_rec_arcface import FaceRecognizer
 from datetime import datetime
 from dateutil import tz
@@ -56,13 +57,14 @@ class CheckIn(object):
             now = datetime.now(self.time_zone)
             checkin_time = now.isoformat(timespec='seconds')
             self.checkin_api.call_api(name, checkin_time)
+            post_message_to_channel('{}: {}', name, checkin_time)
         else:
             # save unknown person image for analysis
             cv2.imwrite('{}/unknown/{}.jpg'.format(self.today_dir, uuid.uuid4()), self.image)
 
 
 if __name__ == "__main__":
-    checkIn = CheckIn(input_source=-1, face_recognizer=FaceRecognizer())
+    checkIn = CheckIn(input_source=int(os.environ['VIDEO_SOURCE']), face_recognizer=FaceRecognizer())
 
     # make check in result dir:
     if not os.path.isdir(checkIn.today_dir):
@@ -72,7 +74,7 @@ if __name__ == "__main__":
 
     start = time.time()
     while checkIn.cap.isOpened():
-        if time.time() - start > 30:
+        if time.time() - start > int(os.environ['RUN_TIME'])*60:
             sys.exit()
         checkIn.run_camera()
         if cv2.waitKey(30) & 0xFF == ord('q'):
