@@ -52,13 +52,15 @@ class CheckIn(object):
 
     def do_check_in(self, name):
         if name != 'Unknown':
-            if name not in self.checked_name:
-                self.checked_name.append(name)
-                cv2.imwrite('{}/known/{}_{}.jpg'.format(self.today_dir, name, uuid.uuid4()), self.image)
             now = datetime.now(self.time_zone)
             checkin_time = now.isoformat(timespec='seconds')
+
+            if name not in self.checked_name:
+                self.checked_name.append(name)
+                post_message_to_channel('{}: {}'.format(name, checkin_time))
+
+            cv2.imwrite('{}/known/{}_{}.jpg'.format(self.today_dir, name, uuid.uuid4()), self.image)
             self.checkin_api.call_api(name, checkin_time)
-            post_message_to_channel('{}: {}'.format(name, checkin_time))
         else:
             # save unknown person image for analysis
             cv2.imwrite('{}/unknown/{}.jpg'.format(self.today_dir, uuid.uuid4()), self.image)

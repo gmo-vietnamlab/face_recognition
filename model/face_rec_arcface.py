@@ -86,12 +86,19 @@ class FaceRecognizer(object):
             found_front_face = False
         name = 'Unknown'
         if found_front_face:
-            print('found face')
             face = self.fa.get(image)
             face_encoding = face[0].normed_embedding
 
             similarity, id = self.faiss_index.search(np.ascontiguousarray([face_encoding]), 1)
+            print('found face with similarity: ', similarity)
             if 1 - similarity < 0.6:
                 # only accept distance < 0.6
                 name = self.name_list[id[0][0]]
         return found_front_face, name
+
+
+if __name__ == '__main__':
+    recognizer = FaceRecognizer()
+    _, name = recognizer.recognize_image(
+        cv2.imread('data/employee_data/PhamVanDong/PhamVanDong_ce700061-b366-473d-835d-1ff820c1798d.jpg'))
+    print(name)
