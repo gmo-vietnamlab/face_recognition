@@ -1,6 +1,6 @@
 from __future__ import division
-from checkin_api.checkin_api import CheckinAPI
-from checkin_api.mattermost.post import post_message_to_channel
+# from checkin_api.checkin_api import CheckinAPI
+# from checkin_api.mattermost.post import post_message_to_channel
 from model.face_rec_arcface import FaceRecognizer
 from datetime import datetime
 from dateutil import tz
@@ -13,7 +13,7 @@ import uuid
 
 class CheckIn(object):
     def __init__(self, input_source, face_recognizer):
-        self.checkin_api = CheckinAPI()
+        # self.checkin_api = CheckinAPI()
         self.face_recognizer = face_recognizer
         self.image = None
         self.predicted_name = ['Unknown']
@@ -31,13 +31,13 @@ class CheckIn(object):
             ret, self.image = self.cap.read()
             self.predict_name()
             # copy image then add text to that copy
-            # image = self.image.copy()
-            # cv2.rectangle(image, (0, 0), (260, 50), (255, 255, 255), cv2.FILLED)
-            # font = cv2.FONT_HERSHEY_TRIPLEX
-            # cv2.putText(image, self.predicted_name[0], (10, 30), font, 1.3, (0, 128, 0), 1)
+            image = self.image.copy()
+            cv2.rectangle(image, (0, 0), (260, 50), (255, 255, 255), cv2.FILLED)
+            font = cv2.FONT_HERSHEY_TRIPLEX
+            cv2.putText(image, self.predicted_name[0], (10, 30), font, 1.3, (0, 128, 0), 1)
 
             # Display the resulting image
-            # cv2.imshow('Video', image)
+            cv2.imshow('Video', image)
 
         except Exception as e:
             print('Got exception when capture video!¥n', e)
@@ -60,14 +60,14 @@ class CheckIn(object):
                 post_message_to_channel('{}: {}'.format(name, checkin_time))
 
             cv2.imwrite('{}/known/{}_{}.jpg'.format(self.today_dir, name, uuid.uuid4()), self.image)
-            self.checkin_api.call_api(name, checkin_time)
+            # self.checkin_api.call_api(name, checkin_time)
         else:
             # save unknown person image for analysis
             cv2.imwrite('{}/unknown/{}.jpg'.format(self.today_dir, uuid.uuid4()), self.image)
 
 
 if __name__ == "__main__":
-    checkIn = CheckIn(input_source=int(os.environ['VIDEO_SOURCE']), face_recognizer=FaceRecognizer())
+    checkIn = CheckIn(input_source=int(0), face_recognizer=FaceRecognizer())
 
     # make check in result dir:
     if not os.path.isdir(checkIn.today_dir):
@@ -77,8 +77,8 @@ if __name__ == "__main__":
 
     start = time.time()
     while checkIn.cap.isOpened():
-        if time.time() - start > int(os.environ['RUN_TIME'])*60:
-            sys.exit()
+        # if time.time() - start > int(os.environ['RUN_TIME'])*60:
+            # sys.exit()
         checkIn.run_camera()
         if cv2.waitKey(30) & 0xFF == ord('q'):
             break

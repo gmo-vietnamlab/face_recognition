@@ -41,13 +41,14 @@ def augment_images(capture_directory, output_directory):
             face_locations = face_recognition.face_locations(image, model="hog")
             if len(face_locations) > 0:
                 try:
-                    cropped_image = crop_face(image, face_locations[0])
-                    if cropped_image is not None and (cropped_image.size > 0):
-                        train_face_save.save_known_image(cropped_image, person, 150)
+                    # cropped_image = crop_face(image, face_locations[0])
+                    # if cropped_image is not None and (cropped_image.size > 0):
+                    train_face_save.save_known_image(image, person, 150)
                 except Exception:
                     print('failed: ', capture_image)
                     os.remove(capture_image)
             else:
+                print('cannot get face model using hog {}'.format(capture_image))
                 continue
 
 
@@ -62,11 +63,14 @@ def arcface_save_encodings(image_dir):
         person_imagepaths = glob.glob(os.path.join(image_dir, person) + '/*.jpg')
         person_imagepaths.extend(glob.glob(os.path.join(image_dir, person) + '/*.png'))
         for imagepath in person_imagepaths:
+            print('image path: {}'.format(imagepath))
             face_image = cv2.imread(imagepath)
             if len(face_recognition.face_locations(face_image, model="hog")) > 0:
                 face = fa.get(face_image)
+                print('fa face: ', face)
                 try:
                     face_encoding = face[0].normed_embedding
+                    print('get encoding {} '.format(face_encoding))
                     # print("Encode for image %s" % imagepath)
                     list_encoding.append({imagepath: face_encoding})
                 except:
@@ -106,9 +110,9 @@ def save_encoding_main(overwrite=False):
         pickle.dump(encodings, f)
 
     # remove data in employee_data
-    if os.path.isdir(directory):
-        shutil.rmtree(directory)
-    os.mkdir(directory)
+    # if os.path.isdir(directory):
+        # shutil.rmtree(directory)
+    # os.mkdir(directory)
 
 
 if __name__ == "__main__":

@@ -13,6 +13,7 @@ def init_faiss_index(model='arcface', dim=512):
     with open('data/encodings/vnlab_HN_encodings.dat', 'rb') as f:
         all_face_encodings = pickle.load(f)
 
+    print('xxx', all_face_encodings)
     pandas_dict = {}
 
     pandas_dict['label'] = []
@@ -32,11 +33,12 @@ def init_faiss_index(model='arcface', dim=512):
     df_all = pd.DataFrame.from_dict(pandas_dict)
 
     list_vector = ['vector_' + str(i) for i in range(0, dim)]
+    print(len(df_all.index), len(df_all.vector.values.tolist()))
     df_all[list_vector] = pd.DataFrame(df_all.vector.values.tolist(), index=df_all.index)
 
     if model == 'arcface':
         quantizer = faiss.IndexFlatIP(dim)
-        index = faiss.IndexIVFFlat(quantizer, dim, 9, faiss.METRIC_INNER_PRODUCT)
+        index = faiss.IndexIVFFlat(quantizer, dim, 6, faiss.METRIC_INNER_PRODUCT)
 
         train_vectors = np.ascontiguousarray(df_all[list_vector].astype('float32'))
         faiss.normalize_L2(train_vectors)
@@ -79,9 +81,10 @@ class FaceRecognizer(object):
         print('detect and recognize face')
         f_locations = face_recognition.face_locations(image, model="hog")
         if len(f_locations) > 0:
+            print('found front face')
             found_front_face = True
-            fl = f_locations[0]
-            image = image[fl[0]:fl[2], fl[3]:fl[1], :]
+        #     fl = f_locations[0]
+        #     image = image[fl[0]:fl[2], fl[3]:fl[1], :]
         else:
             found_front_face = False
         name = 'Unknown'
@@ -100,5 +103,5 @@ class FaceRecognizer(object):
 if __name__ == '__main__':
     recognizer = FaceRecognizer()
     _, name = recognizer.recognize_image(
-        cv2.imread('data/employee_data/PhamVanDong/PhamVanDong_ce700061-b366-473d-835d-1ff820c1798d.jpg'))
+        cv2.imread('data/employee_data/NguyenVanThai/5.png'))
     print(name)
