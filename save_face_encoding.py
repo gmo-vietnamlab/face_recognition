@@ -33,23 +33,29 @@ def augment_images(capture_directory, output_directory):
     all_people = os.listdir(capture_directory)
     print(all_people)
     for person in all_people:
+        # list_capture_images = []
+        # for extension in ['jpg', 'png', 'JPG', 'PNG']:
+            # list_capture_images = list_capture_images + glob.glob(os.path.join(capture_directory, person) + '/*.{}'.format(extension))
+
+
         list_capture_images = glob.glob(os.path.join(capture_directory, person) + '/*.png')
         list_capture_images.extend(glob.glob(os.path.join(capture_directory, person) + '/*.JPG'))
+        list_capture_images.extend(glob.glob(os.path.join(capture_directory, person) + '/*.jpg'))
 
         for capture_image in list_capture_images:
             image = face_recognition.load_image_file(capture_image)
             face_locations = face_recognition.face_locations(image, model="hog")
-            if len(face_locations) > 0:
-                try:
-                    # cropped_image = crop_face(image, face_locations[0])
-                    # if cropped_image is not None and (cropped_image.size > 0):
-                    train_face_save.save_known_image(image, person, 150)
-                except Exception:
-                    print('failed: ', capture_image)
-                    os.remove(capture_image)
-            else:
-                print('cannot get face model using hog {}'.format(capture_image))
-                continue
+            # if len(face_locations) > 0:
+            try:
+                # cropped_image = crop_face(image, face_locations[0])
+                # if cropped_image is not None and (cropped_image.size > 0):
+                train_face_save.save_known_image(image, person, 150)
+            except Exception:
+                print('failed: ', capture_image)
+                os.remove(capture_image)
+            # else:
+            #     print('cannot get face model using hog {}'.format(capture_image))
+            #     continue
 
 
 def arcface_save_encodings(image_dir):
@@ -65,21 +71,19 @@ def arcface_save_encodings(image_dir):
         for imagepath in person_imagepaths:
             print('image path: {}'.format(imagepath))
             face_image = cv2.imread(imagepath)
-            if len(face_recognition.face_locations(face_image, model="hog")) > 0:
-                face = fa.get(face_image)
-                print('fa face: ', face)
-                try:
-                    face_encoding = face[0].normed_embedding
-                    print('get encoding {} '.format(face_encoding))
-                    # print("Encode for image %s" % imagepath)
-                    list_encoding.append({imagepath: face_encoding})
-                except:
-                    print("Failed to encode image %s" % imagepath)
-            else:
-                # remove image that dlib cannot detect
-                print("remove image that dlib cannot detect %s" % imagepath)
-                os.remove(imagepath)
-                continue
+            # if len(face_recognition.face_locations(face_image, model="hog")) > 0:
+            face = fa.get(face_image)
+            try:
+                face_encoding = face[0].normed_embedding
+                # print("Encode for image %s" % imagepath)
+                list_encoding.append({imagepath: face_encoding})
+            except:
+                print("Failed to encode image %s" % imagepath)
+            # else:
+            #     # remove image that dlib cannot detect
+            #     print("remove image that dlib cannot detect %s" % imagepath)
+            #     os.remove(imagepath)
+            #     continue
 
         all_encoding[str(person)] = list_encoding
     return all_encoding

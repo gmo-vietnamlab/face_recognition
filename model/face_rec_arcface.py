@@ -13,7 +13,6 @@ def init_faiss_index(model='arcface', dim=512):
     with open('data/encodings/vnlab_HN_encodings.dat', 'rb') as f:
         all_face_encodings = pickle.load(f)
 
-    print('xxx', all_face_encodings)
     pandas_dict = {}
 
     pandas_dict['label'] = []
@@ -33,7 +32,6 @@ def init_faiss_index(model='arcface', dim=512):
     df_all = pd.DataFrame.from_dict(pandas_dict)
 
     list_vector = ['vector_' + str(i) for i in range(0, dim)]
-    print(len(df_all.index), len(df_all.vector.values.tolist()))
     df_all[list_vector] = pd.DataFrame(df_all.vector.values.tolist(), index=df_all.index)
 
     if model == 'arcface':
@@ -103,5 +101,5 @@ class FaceRecognizer(object):
 if __name__ == '__main__':
     recognizer = FaceRecognizer()
     _, name = recognizer.recognize_image(
-        cv2.imread('data/employee_data/NguyenVanThai/5.png'))
+        cv2.imread('known_people/thanh_test.png'))
     print(name)
