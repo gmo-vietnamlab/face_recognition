@@ -77,24 +77,28 @@ class FaceRecognizer(object):
 
     def recognize_image(self, image):
         print('detect and recognize face')
-        f_locations = face_recognition.face_locations(image, model="hog")
-        if len(f_locations) > 0:
-            print('found front face')
-            found_front_face = True
+        # f_locations = face_recognition.face_locations(image, model="hog")
+        # if len(f_locations) > 0:
+        #     print('found front face')
+        #     found_front_face = True
         #     fl = f_locations[0]
         #     image = image[fl[0]:fl[2], fl[3]:fl[1], :]
-        else:
-            found_front_face = False
+        # else:
+        #     found_front_face = False
         name = 'Unknown'
-        if found_front_face:
+        found_front_face = False
+        try:
             face = self.fa.get(image)
             face_encoding = face[0].normed_embedding
-
+            found_front_face = True
             similarity, id = self.faiss_index.search(np.ascontiguousarray([face_encoding]), 1)
             print('found face with similarity: ', similarity)
             if 1 - similarity < 0.6:
                 # only accept distance < 0.6
                 name = self.name_list[id[0][0]]
+        except Exception as e:
+            print('Failed to find front face and get encoding')
+        
         return found_front_face, name
 
 
