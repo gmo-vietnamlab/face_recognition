@@ -18,7 +18,7 @@ class CheckinAPI(BaseAPI):
         """
         print(username, checkin_time)
         try:
-            res = requests.post(url=self.host + '/admin/checkin',
+            res = requests.post(url=self.host + '/admin/checkin-by-username',
                                 headers={
                                     'Authorization': f'Bearer {self.admin_token}',
                                     'Content-Type': 'application/json'

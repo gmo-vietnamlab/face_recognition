@@ -1,18 +1,18 @@
 Running 
 
-```cd check_in_face_rec```
+```cd /PATH/TO/face_recognition```
 
-Go to parent folder
-```cd ..```
+Add path 
+```export PYTHONPATH="${PYTHONPATH}:`pwd````
 
-Get link of parent folder
-```readlink -f``` 
+Start virtualenv
+```source face_rec_venv/bin/activate```
 
-Post above link in below 
-```export PYTHONPATH="${PYTHONPATH}:{folder_here}```
+Run checkin
+```python checkin.py```
 
-Register user for training:
-```/usr/bin/python3.6 -m ./check_in_face_rec/register_webcam_images```
+Note: check file job/run_checkin.sh for more detail
 
-Run webcam
-```/usr/bin/python3.6 -m ./check_in_face_rec/face_rec_from_webcam```
+Prepare encoding file
+```python save_face_encoding.py```
+# face_recognition

@@ -1,5 +1,6 @@
 from __future__ import division
 from datetime import datetime
+from os import name
 import cv2
 import numpy as np
 import pandas as pd
@@ -61,7 +62,7 @@ PREDICTED_NAME = Value(ctypes.c_int, 0)
 class Recognize(object):
     def __init__(self, source):
         self.image = None
-        self.fa = insightface.app.FaceAnalysis()
+        self.fa = insightface.app.FaceAnalysis(name='buffalo_sc')
         self.fa.prepare(ctx_id=-1)
         self.cap = cv2.VideoCapture(source)
         self.cap.set(cv2.CAP_PROP_FPS, 14)

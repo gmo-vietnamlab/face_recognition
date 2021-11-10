@@ -1,10 +1,12 @@
 import requests
 from abc import abstractmethod
 import json
+import os
+from checkin_api.config import api_host
 
 
 class BaseAPI:
-    host = 'http://150.95.173.159:8585/api'
+    host = api_host
 
     def __init__(self):
         pass

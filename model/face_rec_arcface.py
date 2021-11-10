@@ -36,7 +36,7 @@ def init_faiss_index(model='arcface', dim=512):
 
     if model == 'arcface':
         quantizer = faiss.IndexFlatIP(dim)
-        index = faiss.IndexIVFFlat(quantizer, dim, 9, faiss.METRIC_INNER_PRODUCT)
+        index = faiss.IndexIVFFlat(quantizer, dim, 6, faiss.METRIC_INNER_PRODUCT)
 
         train_vectors = np.ascontiguousarray(df_all[list_vector].astype('float32'))
         faiss.normalize_L2(train_vectors)
@@ -54,7 +54,7 @@ class FaceRecognizeDemo(object):
     def __init__(self, source):
         self.image = None
         self.cap = cv2.VideoCapture(source)
-        self.cap.set(cv2.CAP_PROP_FPS, 14)
+        self.cap.set(cv2.CAP_PROP_FPS, 60)
 
     def get_frame_without_predict(self):
         try:
@@ -68,7 +68,7 @@ class FaceRecognizeDemo(object):
 class FaceRecognizer(object):
     def __init__(self):
         self.image = None
-        self.fa = insightface.app.FaceAnalysis()
+        self.fa = insightface.app.FaceAnalysis(name='buffalo_sc')
         self.fa.prepare(ctx_id=-1)
         self._set_faiss_index()
 
@@ -76,24 +76,26 @@ class FaceRecognizer(object):
         self.name_list, self.faiss_index = init_faiss_index('arcface', 512)
 
     def recognize_image(self, image):
-        f_locations = face_recognition.face_locations(image, model="hog")
-        if len(f_locations) > 0:
-            found_front_face = True
-            fl = f_locations[0]
-            image = image[fl[0]:fl[2], fl[3]:fl[1], :]
-        else:
-            found_front_face = False
+        print('detect and recognize face')
         name = 'Unknown'
-        print('in predict')
-
-        if found_front_face:
-            print('found face')
+        found_front_face = False
+        try:
             face = self.fa.get(image)
             face_encoding = face[0].normed_embedding
-
+            found_front_face = True
             similarity, id = self.faiss_index.search(np.ascontiguousarray([face_encoding]), 1)
+            print('found face with similarity: ', similarity)
             if 1 - similarity < 0.6:
                 # only accept distance < 0.6
                 name = self.name_list[id[0][0]]
-
+        except Exception as e:
+            print('Failed to find front face and get encoding')
+        
         return found_front_face, name
+
+
+if __name__ == '__main__':
+    recognizer = FaceRecognizer()
+    _, name = recognizer.recognize_image(
+        cv2.imread('known_people/thanh_test.png'))
+    print(name)

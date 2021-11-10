@@ -33,26 +33,33 @@ def augment_images(capture_directory, output_directory):
     all_people = os.listdir(capture_directory)
     print(all_people)
     for person in all_people:
+        # list_capture_images = []
+        # for extension in ['jpg', 'png', 'JPG', 'PNG']:
+            # list_capture_images = list_capture_images + glob.glob(os.path.join(capture_directory, person) + '/*.{}'.format(extension))
+
+
         list_capture_images = glob.glob(os.path.join(capture_directory, person) + '/*.png')
         list_capture_images.extend(glob.glob(os.path.join(capture_directory, person) + '/*.JPG'))
+        list_capture_images.extend(glob.glob(os.path.join(capture_directory, person) + '/*.jpg')) 
 
         for capture_image in list_capture_images:
             image = face_recognition.load_image_file(capture_image)
             face_locations = face_recognition.face_locations(image, model="hog")
-            if len(face_locations) > 0:
-                try:
-                    cropped_image = crop_face(image, face_locations[0])
-                    if cropped_image is not None and (cropped_image.size > 0):
-                        train_face_save.save_known_image(cropped_image, person, 150)
-                except Exception:
-                    print('failed: ', capture_image)
-                    os.remove(capture_image)
-            else:
-                continue
+            # if len(face_locations) > 0:
+            try:
+                # cropped_image = crop_face(image, face_locations[0])
+                # if cropped_image is not None and (cropped_image.size > 0):    
+                train_face_save.save_known_image(image, person, 150)
+            except Exception:
+                print('failed: ', capture_image)
+                os.remove(capture_image)
+            # else:
+            #     print('cannot get face model using hog {}'.format(capture_image))
+            #     continue
 
 
 def arcface_save_encodings(image_dir):
-    fa = insightface.app.FaceAnalysis()
+    fa = insightface.app.FaceAnalysis(name='buffalo_sc')
     fa.prepare(ctx_id=-1)
 
     all_encoding = {}
@@ -62,20 +69,21 @@ def arcface_save_encodings(image_dir):
         person_imagepaths = glob.glob(os.path.join(image_dir, person) + '/*.jpg')
         person_imagepaths.extend(glob.glob(os.path.join(image_dir, person) + '/*.png'))
         for imagepath in person_imagepaths:
+            print('image path: {}'.format(imagepath))
             face_image = cv2.imread(imagepath)
-            if len(face_recognition.face_locations(face_image, model="hog")) > 0:
-                face = fa.get(face_image)
-                try:
-                    face_encoding = face[0].normed_embedding
-                    # print("Encode for image %s" % imagepath)
-                    list_encoding.append({imagepath: face_encoding})
-                except:
-                    print("Failed to encode image %s" % imagepath)
-            else:
-                # remove image that dlib cannot detect
-                print("remove image that dlib cannot detect %s" % imagepath)
-                os.remove(imagepath)
-                continue
+            # if len(face_recognition.face_locations(face_image, model="hog")) > 0:
+            face = fa.get(face_image)
+            try:
+                face_encoding = face[0].normed_embedding
+                # print("Encode for image %s" % imagepath)
+                list_encoding.append({imagepath: face_encoding})
+            except:
+                print("Failed to encode image %s" % imagepath)
+            # else:
+            #     # remove image that dlib cannot detect
+            #     print("remove image that dlib cannot detect %s" % imagepath)
+            #     os.remove(imagepath)
+            #     continue
 
         all_encoding[str(person)] = list_encoding
     return all_encoding
@@ -106,10 +114,11 @@ def save_encoding_main(overwrite=False):
         pickle.dump(encodings, f)
 
     # remove data in employee_data
-    if os.path.isdir(directory):
-        shutil.rmtree(directory)
-    os.mkdir(directory)
+    # if os.path.isdir(directory):
+        # shutil.rmtree(directory)
+    # os.mkdir(directory)
 
-
+train = True
 if __name__ == "__main__":
     save_encoding_main(overwrite=True)
+
