@@ -15,7 +15,7 @@ Note: check file job/run_checkin.sh for more detail
 
 Prepare encoding file
 ```python save_face_encoding.py```
-# face_recognition
+# Docker build
 
 Docker build images:
 
