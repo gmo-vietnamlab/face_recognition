@@ -1,6 +1,6 @@
 from __future__ import division
-from checkin_api.checkin_api import CheckinAPI
-from checkin_api.mattermost.post import post_message_to_channel
+#from checkin_api.checkin_api import CheckinAPI
+#from checkin_api.mattermost.post import post_message_to_channel
 from model.face_rec_arcface import FaceRecognizer
 from datetime import datetime
 from dateutil import tz
@@ -12,7 +12,7 @@ import uuid
 
 class CheckIn(object):
     def __init__(self, input_source, face_recognizer):
-        self.checkin_api = CheckinAPI()
+        #self.checkin_api = CheckinAPI()
         self.face_recognizer = face_recognizer
         self.image = None
         self.predicted_name = ['Unknown']
@@ -69,10 +69,10 @@ if __name__ == "__main__":
     checkIn = CheckIn(input_source=int(0), face_recognizer=FaceRecognizer())
 
     # make check in result dir:
-    if not os.path.isdir(checkIn.today_dir):
-        os.mkdir(checkIn.today_dir)
-        os.mkdir(checkIn.today_dir + '/known')
-        os.mkdir(checkIn.today_dir + '/unknown')
+    # if not os.path.isdir(checkIn.today_dir):
+    #     os.mkdir(checkIn.today_dir)
+    #     os.mkdir(checkIn.today_dir + '/known')
+    #     os.mkdir(checkIn.today_dir + '/unknown')
 
     start = time.time()
     while checkIn.cap.isOpened():

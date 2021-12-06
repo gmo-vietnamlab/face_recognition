@@ -17,12 +17,11 @@ class CheckIn(object):
             if self.predicted_name[0] == user_id:
                 return True
             else: 
-                return False
+                 return False
         return False
 
 
 app = FastAPI()
-checkInModel = CheckIn()
 CHECKIN_IMAGE_NAME = 'employee.png'
 
 @app.get('/api/checkin')
@@ -36,6 +35,7 @@ async def json(request: Request):
     image = open(CHECKIN_IMAGE_NAME,'wb')
     image.write(image_decode)
     
+    checkInModel = CheckIn()
     img = cv2.imread(CHECKIN_IMAGE_NAME)
     verified = checkInModel.verify(user_id, img)
     return {'verified': verified}

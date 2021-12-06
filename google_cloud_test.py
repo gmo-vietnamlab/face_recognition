@@ -1,32 +1,24 @@
 import os
-from re import L
 from google.cloud import storage
 from google.cloud.client import Client
 from google.cloud.storage import blob, bucket
+from save_face_encoding import arcface_save_encodings, augment_images
 
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/home/thanh/.config/gcloud/authen.json'
-
+#os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/usr/src/app/.config/gcloud/authen.json'
 storage_client = storage.Client()
-
 vars(bucket)
 
 #Access to a bucket
 my_bucket = storage_client.get_bucket('rem_recommend_dev')
 
 
-employee_name = input()
-path = '/home/thanh/'
-test_path = path + employee_name + '/'
-os.mkdir(test_path)
+#Thay lai dia chi url gsc va url src code
+#Tham khao https://cloud.google.com/storage/docs/gsutil/commands/rsync
+os.system(command="gsutil -m cp -r gs://rem_recommend_dev/micro-erp-data/employee_data /home/thanh/erp/face_recognition/data")
+#os.system(command='gsutil -m cp -r gs://rem_recommend_dev/micro-erp-data/employee_data /usr/src/app/data')
 
 
-#download files:
-prefix = 'rem_recommend_dev/model/'
-blobs = my_bucket.list_blobs(prefix=prefix)
-
-storage_client = storage.Client()
-blobs = my_bucket.list_blobs()  # Get list of files
-for blob in blobs:
-    filename = blob.name.replace('/', '_') 
-    blob.download_to_filename(test_path + filename)
+#os.system(command='python save_face_encoding.py')
+#os.system(command='/root/miniconda3/envs/face/bin/python save_face_encoding.py')
