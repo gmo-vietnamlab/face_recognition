@@ -3,6 +3,5 @@ face_rec_venv/
 __pycache__/
 video_data/
 checkin_api/Time-attendance-backend.postman_collection.json
-data/
 dist/
 build/checkin/

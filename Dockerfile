@@ -13,7 +13,7 @@ RUN wget \
     && bash Miniconda3-latest-Linux-x86_64.sh -b \
     && rm -f Miniconda3-latest-Linux-x86_64.sh 
 
-COPY face_recognition /usr/src/app
+COPY . /usr/src/app
 
 RUN conda create -n face python=3.7
 
@@ -25,7 +25,7 @@ RUN activate face
 
 WORKDIR /usr/src/app
 
-COPY requirements.txt ./
+COPY ./requirements.txt ./
 
 RUN /root/miniconda3/envs/face/bin/pip install install --upgrade pip setuptools wheel
 
@@ -41,14 +41,6 @@ RUN /root/miniconda3/envs/face/bin/pip install fastapi==0.70.0
 
 RUN /root/miniconda3/envs/face/bin/pip install --no-cache-dir -r requirements.txt
 
-#ADD run.sh /run.sh
-
-#ADD entrypoint.sh /entrypoint.sh
- 
-#RUN chmod +x /run.sh /entrypoint.sh
-
-#ENTRYPOINT /entrypoint.sh
-
-CMD ["/root/miniconda3/envs/face/bin/uvicorn", "get_api:app", "--reload", "--host", "0.0.0.0"]
+CMD /root/miniconda3/envs/face/bin/python train_and_get_api.py
 
 EXPOSE 8000
