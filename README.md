@@ -20,7 +20,7 @@ Docker run container
 
 ```cd /face_recognition```
 
-Create new employee folder
+Create new employee folder and add to
 
 ```data/emplyee_data/new_employee```
 
