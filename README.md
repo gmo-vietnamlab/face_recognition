@@ -1,10 +1,12 @@
+# Download src code:
+
 ```git checkout test_api```
 
 ```git clone```
 
 ```cd /face_recognition```
 
-# Docker build
+# Docker build:
 
 Docker build images:
 
