@@ -19,7 +19,7 @@ Prepare encoding file
 
 Docker build images:
 
-```docker images -t face_recognition .```
+```docker build -t face_recognition .```
   
 Docker run container
 
