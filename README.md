@@ -16,6 +16,14 @@ Docker run container
 
 ```docker run -p 8000 face-recognition```
 
+# Add images for new employee
+
+```cd /face_recognition```
+
+Create new employee folder
+
+```data/emplyee_data/new_employee```
+
 # Change port and host in Dockerfile if set machine to server:
 edit train_and_get_api.py file and Dockerfile. Exp:
 
