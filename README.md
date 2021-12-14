@@ -1,20 +1,9 @@
-Running 
+```git checkout test_api```
 
-```cd /PATH/TO/face_recognition```
+```git clone```
 
-Add path 
-```export PYTHONPATH="${PYTHONPATH}:`pwd````
+```cd /face_recognition```
 
-Start virtualenv
-```source face_rec_venv/bin/activate```
-
-Run checkin
-```python checkin.py```
-
-Note: check file job/run_checkin.sh for more detail
-
-Prepare encoding file
-```python save_face_encoding.py```
 # Docker build
 
 Docker build images:
@@ -25,10 +14,10 @@ Docker run container
 
 ```docker run -p 8000 face-recognition```
 
-Change port and host in Dockerfile if set machine to server 
-Exp:
+# Change port and host in Dockerfile if set machine to server:
+edit train_and_get_api.py file and Dockerfile. Exp:
 
-```CMD ["/root/miniconda3/envs/face/bin/uvicorn", "get_api:app", "--reload", "--host", "192.168.1.123", "--port", "12345"]```
+```os.system(command='/root/miniconda3/envs/face/bin/uvicorn get_api:app --host 192.168.1.123 --port 12345 --reload')```
 
 ```EXPOSE 12345```
 
