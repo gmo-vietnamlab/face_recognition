@@ -14,7 +14,7 @@ Docker build images:
   
 Docker run container
 
-```docker run -p 8000 face-recognition```
+```docker run -p 8000 face_recognition```
 
 # Add images for new employee
 
@@ -31,5 +31,6 @@ edit train_and_get_api.py file and Dockerfile. Exp:
 
 ```EXPOSE 12345```
 
+```docker run -p 8000 face_recognition ```
 
 
