@@ -31,6 +31,6 @@ edit train_and_get_api.py file and Dockerfile. Exp:
 
 ```EXPOSE 12345```
 
-```docker run -p 8000 face_recognition ```
+```docker run -p 12345 face_recognition ```
 
 
